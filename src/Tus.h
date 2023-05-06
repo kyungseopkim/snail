@@ -5,75 +5,64 @@
 #ifndef TUS_CPP_TUS_H
 #define TUS_CPP_TUS_H
 
+#include "Options.h"
+#include "cpr/cpr.h"
+#include "leveldb/db.h"
 #include <iostream>
 #include <map>
+#include "TusHeader.h"
+#include "TusFileUtils.h"
 #include "Options.h"
-#include "leveldb/db.h"
-#include "cpr/cpr.h"
-#include "BigFileManager.h"
+#include "cpr/body.h"
+#include "FileTracker.h"
 
-class TusMeta : public std::map<std::string, std::string, cpr::CaseInsensitiveCompare> {
-public:
-    TusMeta();
-    virtual ~TusMeta();
-
-    void put(const std::string& key, const std::string& value);
-
-    std::string get_values() const;
-    void fromOptions(const Options& options);
-};
-
-class TusHeader : public cpr::Header {
-
-public:
-    // keys
-    static const std::string CONTENT_LENGTH;
-    static const std::string CONTENT_TYPE;
-    static const std::string TUS_RESUMABLE;
-    static const std::string UPLOAD_LENGTH;
-    static const std::string UPLOAD_OFFSET;
-    static const std::string UPLOAD_METADATA;
-    static const std::string UPLOAD_DEFER_LENGTH;
-    static const std::string UPLOAD_CONCAT;
-    static const std::string UPLOAD_CHECKSUM;
-    // values
-    static const std::string TUS_VERSION;
-    static const std::string OCTET_STREAM;
-
-    TusHeader();
-    TusHeader(cpr::Header& header);
-    virtual ~TusHeader();
-
-    void put(const std::string& key, const std::string& value);
-    std::string toString() const;
-    int64_t getInt(const std::string& key) ;
-    void debug();
-private:
-    void init();
-
-};
+namespace snail {
 
 
 
 class Tus {
 private:
-    std::string _endpoint;
-    const Options& _options;
-    leveldb::DB *_db{};
-    leveldb::Options _db_options;
-    const std::string _finger_print;
+  std::string _endpoint;
+  const Options &_options;
+  leveldb::DB *_db{};
+  leveldb::Options _db_options;
+  FileTracker _tracker;
+    
 public:
-    explicit Tus(Options& options);
-    ~Tus();
+  Tus(Options &options);
+  ~Tus();
 
-    std::string create();
-    void resume(const std::string &location);
-    void upload();
-    static bool verifyResponse(cpr::Response& resp);
-    TusHeader options();
-    TusHeader head(const std::string& location);
-    TusHeader patch(const std::string& location, BigFileManager& fileManager);
+  std::string create();
+  void resume(const std::string &location);
+  void upload();
+  static bool verifyResponse(cpr::Response &resp);
+  TusHeader options();
+  TusHeader head(const std::string &location);
+  TusHeader patch(const std::string &location);
 };
 
+class TusBody : public cpr::Body {
+ public:
+    TusBody(): cpr::Body() {};
+    ~TusBody() = default;
 
-#endif //TUS_CPP_TUS_H
+
+//  cpr::Body(const cpr::File& file, off_t offset) {
+//         std::ifstream is(file.filepath, std::ifstream::binary);
+//         if (is) {
+//             is.seekg(0, is.end);
+//             int length = is.tellg() - offset;
+//             is.seekg(offset, is.beg);
+//             std::vector<char> buffer;
+//             buffer.resize(length);
+//             is.read(&buffer[0], length);
+//             is.close();
+//             str_ = std::string(buffer.begin(), buffer.end());
+//         } else {
+//             throw std::invalid_argument("Can't open the file for HTTP request body!");
+//         }
+//     }    
+};
+} // namespace snail
+
+#endif // TUS_CPP_TUS_H

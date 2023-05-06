@@ -5,6 +5,8 @@
 #include "Tus.h"
 #include "TusFileUtils.h"
 
+using namespace snail;
+
 void println(const std::string& str) {
     std::cout << str << std::endl;
 }
@@ -12,6 +14,9 @@ void println(const std::string& str) {
 const std::string version = "0.0.1";
 
 int main(int argc, char** argv) {
+
+    curl_global_init(CURL_GLOBAL_ALL);
+
     Options options;
     dotenv::init( options.getConfig().c_str());
 
@@ -54,5 +59,6 @@ int main(int argc, char** argv) {
     Tus tus(options);
     tus.upload();
 
+    curl_global_cleanup();
     return 0;
 }

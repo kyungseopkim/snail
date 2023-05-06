@@ -5,76 +5,75 @@
 #ifndef SNAIL_OPTIONS_H
 #define SNAIL_OPTIONS_H
 
-
 #include <string>
 
+namespace snail {
 class Options {
 public:
-    Options();
-    ~Options();
+  Options();
+  ~Options();
 
-    const std::string &getConfig() const;
+  const std::string &getConfig() const;
 
-    const std::string &getVin() const;
+  const std::string &getVin() const;
 
-    const std::string &getUrl() const;
+  const std::string &getUrl() const;
 
-    const std::string &getMeta() const;
+  const std::string &getMeta() const;
 
-    const std::string &getStore() const;
+  const std::string &getStore() const;
 
-    int getChunkSize() const;
+  int getChunkSize() const;
 
-    int getTimeout() const;
+  int getTimeout() const;
 
-    bool isNoSave() const;
+  bool isNoSave() const;
 
-    bool isPatchMethod() const;
+  bool isPatchMethod() const;
 
-    void setVin(const std::string &vin);
+  bool isVerbose() const;
 
-    void setUrl(const std::string &url);
+  void setVin(const std::string &vin);
 
-    void setMeta(const std::string &meta);
+  void setUrl(const std::string &url);
 
-    void setStore(const std::string &store);
+  void setMeta(const std::string &meta);
 
-    void setChunkSize(int chunkSize);
+  void setStore(const std::string &store);
 
-    void setTimeout(int timeout);
+  void setChunkSize(int chunkSize);
 
-    void setNoSave(bool noSave);
+  void setTimeout(int timeout);
 
-    void setPatchMethod(bool patchMethod);
+  void setNoSave(bool noSave);
 
-    void override(const std::string& vin,
-                  const std::string& url,
-                  const std::string& meta,
-                  const std::string& store,
-                  int chunkSize,
-                  int timeout,
-                  bool noSave,
-                  bool patchMethod);
+  void setPatchMethod(bool patchMethod);
 
-    std::string validUrl();
+  void override(const std::string &vin, const std::string &url,
+                const std::string &meta, const std::string &store,
+                int chunkSize, int timeout, bool noSave, bool patchMethod);
 
-    const std::string &getFile() const;
+  std::string validUrl();
 
-    void setFile(const std::string &file);
+  const std::string &getFile() const;
 
-    std::string toString() const;
+  void setFile(const std::string &file);
+
+  std::string toString() const;
+  void readConfig();
+
 private:
-    std::string _config;
-    std::string _file;
-    std::string _vin;
-    std::string _url;
-    std::string _meta;
-    std::string _store;
-    int _chunkSize{1024 * 1024};
-    int _timeout{120};
-    bool _noSave = false;
-    bool _patchMethod = false;
+  std::string _config;
+  std::string _file;
+  std::string _vin;
+  std::string _url;
+  std::string _meta;
+  std::string _store;
+  int _chunkSize{1024 * 1024};
+  int _timeout{120};
+  bool _noSave = false;
+  bool _patchMethod = false;
 };
 
-
-#endif //SNAIL_OPTIONS_H
+} // namespace snail
+#endif // SNAIL_OPTIONS_H
