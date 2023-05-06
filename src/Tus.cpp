@@ -15,6 +15,7 @@
 #include "TusMeta.h"
 #include <algorithm>
 #include <utility>
+#include "TusBody.h"
 
 namespace snail {
 
@@ -160,7 +161,7 @@ TusHeader Tus::patch(const std::string &location) {
   header.put(TusHeader::CONTENT_TYPE, TusHeader::OCTET_STREAM);
   header.put(TusHeader::UPLOAD_OFFSET, std::to_string(_tracker.offset()));
 
-  cpr::Response resp = cpr::Patch(cpr::Url{location}, header, cpr::Body{});
+  cpr::Response resp = cpr::Patch(cpr::Url{location}, header, TusBody{_tracker.file(), _tracker.offset()});
   if (!verifyResponse(resp)) {
     std::cerr << "Invalid response code: " << resp.status_code << std::endl;
     exit(1);
