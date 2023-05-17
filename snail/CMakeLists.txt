@@ -1,39 +1,33 @@
 cmake_minimum_required(VERSION 3.10)
-project(snail)
+project(snail VERSION 0.0.1 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 11)
+
 # dependencies
+# -DLEVELDB_BUILD_TESTS=OFF -DLEVELDB_BUILD_BENCHMARKS=OFF  -DCPR_BUILD_TESTS=OFF -DBUILD_SHARED_LIBS=OFF
 
 
 include(FetchContent)
-FetchContent_Declare(
-        CLI11
-        GIT_REPOSITORY https://github.com/CLIUtils/CLI11
-        GIT_TAG        v2.3.2
-)
-FetchContent_MakeAvailable(cli11)
-
-FetchContent_Declare(cpr 
+FetchContent_Declare(cpr
         GIT_REPOSITORY https://github.com/libcpr/cpr.git
-        GIT_TAG 1.9.4 
+        GIT_TAG 1.9.4
         CMAKE_ARGS -DCPR_BUILD_TESTS=OFF -DBUILD_STATIC_LIBS=ON)
 FetchContent_MakeAvailable(cpr)
 
 FetchContent_Declare(leveldb GIT_REPOSITORY https://github.com/google/leveldb.git
-        GIT_TAG 1.23       
+        GIT_TAG 1.23
+        CMAKE_ARGS -DLEVELDB_BUILD_TESTS=OFF -DLEVELDB_BUILD_BENCHMARKS=OFF -DBUILD_SHARED_LIBS=OFF
         )
 FetchContent_MakeAvailable(leveldb)
 
-
-
-# project
 add_subdirectory(base64)
+# project
 
 include_directories(include)
-
 # sources
-file(GLOB_RECURSE SOURCES "src/*.cpp")
-add_library(snail ${SOURCES} )
-target_link_libraries(snail PRIVATE base64 cpr::cpr CLI11::CLI11 leveldb )
+file(GLOB SOURCES "*.cpp")
+add_library(snail STATIC ${SOURCES})
 
+target_link_libraries(snail PUBLIC cpr::cpr leveldb base64 )
+target_include_directories(snail PUBLIC ${PROJECT_SOURCE_DIR}/include)
 

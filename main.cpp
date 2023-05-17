@@ -2,18 +2,22 @@
 #include <CLI/CLI.hpp>
 #include "dotenv.h"
 #include "Options.h"
-#include "Tus.h"
-#include "TusFileUtils.h"
-
+#include "Snail.h"
 using namespace snail;
 
 void println(const std::string& str) {
     std::cout << str << std::endl;
 }
 
+bool is_file_exists(const std::string& file) {
+  struct stat stat_buf {};
+  int rc = stat(file.c_str(), &stat_buf);
+  return rc == 0;
+}
+
 const std::string version = "0.0.1";
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv) {
     Options options;
     dotenv::init( options.getConfig().c_str());
 
@@ -38,23 +42,19 @@ int main(int argc, char** argv) {
     bool noSave = false;
     app.add_flag("-n,--no-save", noSave,"no save meta data for resumable [NO_RESUME]");
     bool patchMethod = false;
-    app.add_flag("--override-patch-method", patchMethod,"use PATCH method for resumable createAndUpload");
+    app.add_flag("--set-patch-method", patchMethod,"use PATCH method for resumable createAndUpload");
 
     CLI11_PARSE(app, argc, argv);
 
-    if (!TusFileUtils::isFileExist(file)) {
+    if(!is_file_exists(file)) {
         println("File not found: " + file);
         return 1;
     }
 
-    options.override(vin, url, meta, store, chunkSize, timeout, noSave, patchMethod);
-    if (options.getVin().empty()) {
-        println("VIN is required");
-        return 1;
-    }
+    options.set(url, meta, store, chunkSize, timeout, noSave, patchMethod);
     options.setFile(file);
-    Tus tus(options);
-    tus.upload();
-
+    Snail snail(options);
+    snail.upload();
+    
     return 0;
 }

@@ -1,4 +1,4 @@
-project(base64)
+project(base64 VERSION 1.0.0 LANGUAGES CXX)
 
 add_library(base64 STATIC base64.cpp)
-target_include_directories(base64 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+target_include_directories(base64 PUBLIC .)

@@ -10,53 +10,53 @@
 
 namespace snail {
 
-StringUtils::StringUtils() = default;
+    StringUtils::StringUtils() = default;
 
-StringUtils::~StringUtils() = default;
+    StringUtils::~StringUtils() = default;
 
-void StringUtils::split(std::string str, char separator) {
-  _strings.clear();
-  int startIndex = 0, endIndex = 0;
-  for (int i = 0; i <= str.size(); i++) {
+    void StringUtils::split(std::string str, char separator) {
+        _strings.clear();
+        int startIndex = 0, endIndex = 0;
+        for (int i = 0; i <= str.size(); i++) {
 
-    // If we reached the end of the word or the end of the input.
-    if (str[i] == separator || i == str.size()) {
-      endIndex = i;
-      std::string temp;
-      temp.append(str, startIndex, endIndex - startIndex);
-      _strings.push_back(temp);
-      startIndex = endIndex + 1;
+            // If we reached the end of the word or the end of the input.
+            if (str[i] == separator || i == str.size()) {
+                endIndex = i;
+                std::string temp;
+                temp.append(str, startIndex, endIndex - startIndex);
+                _strings.push_back(temp);
+                startIndex = endIndex + 1;
+            }
+        }
     }
-  }
-}
 
-const std::vector<std::string> &StringUtils::getStrings() const {
-  return _strings;
-}
+    const std::vector<std::string> &StringUtils::getStrings() const {
+        return _strings;
+    }
 
-void StringUtils::list(std::string dir) {
-  _strings.clear();
-  DIR *dp;
-  struct dirent *dirp;
-  if ((dp = opendir(dir.c_str())) == nullptr) {
-    throw std::runtime_error("Error(" + std::to_string(errno) + ") opening " +
-                             dir);
-  }
+    void StringUtils::list(std::string dir) {
+        _strings.clear();
+        DIR *dp;
+        struct dirent *dirp;
+        if ((dp = opendir(dir.c_str())) == nullptr) {
+            throw std::runtime_error("Error(" + std::to_string(errno) + ") opening " +
+                                     dir);
+        }
 
-  while ((dirp = readdir(dp)) != nullptr) {
-    _strings.emplace_back(dirp->d_name);
-  }
-  closedir(dp);
-}
+        while ((dirp = readdir(dp)) != nullptr) {
+            _strings.emplace_back(dirp->d_name);
+        }
+        closedir(dp);
+    }
 
-struct MatchPathSeparator {
-  bool operator()(char ch) const { return ch == '/'; }
-};
+    struct MatchPathSeparator {
+        bool operator()(char ch) const { return ch == '/'; }
+    };
 
-std::string StringUtils::basename(const std::string &pathname) {
-  return std::string{
-      std::find_if(pathname.rbegin(), pathname.rend(), MatchPathSeparator())
-          .base(),
-      pathname.end()};
-}
+    std::string StringUtils::basename(const std::string &pathname) {
+        return std::string{
+                std::find_if(pathname.rbegin(), pathname.rend(), MatchPathSeparator())
+                        .base(),
+                pathname.end()};
+    }
 } // namespace snail
